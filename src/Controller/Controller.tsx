@@ -1,37 +1,38 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 
 interface IProps {
     runIterator: () => void;
     initialRun: () => void;
+    resetBoard: () => void;
 }
 
 const Controller:FC<IProps> = (props: IProps) => {
-    const [updateInterval, setUpdateInterval] = React.useState<string>('1000')
-    const [isRunning, setIsRunning] = React.useState<boolean>(false)
-    const [generation, setGeneration] = React.useState<number>(0)
+    const [updateInterval, setUpdateInterval] = useState<string>('1000')
+    const [isRunning, setIsRunning] = useState<boolean>(false)
+    const [intervalId, setIntervalId] = useState<number>(0)
     const stopGame = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        // e.preventDefault();
-        // window.clearInterval(runGame)
-        // console.log("Inside stop Game", runGame)
+        e.preventDefault()
+        setIsRunning(false)
+        props.resetBoard()
     }    
 
-
     const handleUpdateInterval = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("updated Interval to:", e.target.value)
         return setUpdateInterval(e.target.value)
     }
 
-    const handleRun = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.preventDefault()
-        if(generation === 0) { console.log('GENERATION 0'); props.initialRun();}  
-        setGeneration(generation + 1)
+    const handleRun = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault() 
+        let runGame:number;
         const flag = !isRunning;
         setIsRunning(!isRunning)
-        console.log("current", isRunning, flag)
         if(flag) {
-            await setInterval(props.runIterator, updateInterval)
-            // console.log("Inside handleRUn",runGame)
-        }
+            runGame = setInterval(props.runIterator, updateInterval)
+            setIntervalId(runGame)
+        } 
+        else {
+            clearInterval(intervalId)
+        }         
+      
     }
 
     return (
@@ -42,7 +43,6 @@ const Controller:FC<IProps> = (props: IProps) => {
             <button onClick={handleRun}>{isRunning ? 'Stop' : 'Run'}</button>
             <button onClick={stopGame}>Stop</button>
             </form>
-            <div>Generation: {generation}</div>
         </div>
     )
 }

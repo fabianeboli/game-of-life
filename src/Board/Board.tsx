@@ -4,8 +4,8 @@ import Controller from "../Controller/Controller";
 
 enum Cell { 
   Dead,
-  YoungAlive,
-  OldAlive
+  Young,
+  Old
 }
 
 interface IProps {
@@ -18,127 +18,96 @@ const Board: FC<IProps> = (props: IProps) => {
   const board: Cell[][] = new Array(size).fill(Cell.Dead).map(() => new Array(size).fill(Cell.Dead));
 
   const [cells, setCells] = useState<Cell[][]>(board);
+  const [generation, setGeneration] = useState<number>(0)
+  
 
   const presentBoard = () => {
-    return cells.map(row => (
+    return cells.map((row, y) => (
       <tr>
-        {row.map(cell => (
-          <Sc.cell id={uuid()} onClick={handleClick}>{cell}</Sc.cell>
+        {row.map((cell, x) => (
+          <Sc.cell key={uuid()} id={`${x}:${y}`} onClick={handleClick}>{cell}</Sc.cell>
         ))}
       </tr>
     ));
   };
 
-  const handleClick = (e: React.MouseEvent) => {
-      //left click = add a cell
-      if(e.type === 'click') {
-          console.log('left',e.currentTarget.textContent)
-          // return setCells([...cells, [false]])
-        // } else if (e.type === 'contextmenu') {
-        //     // right click = remove a cell
-        //     e.preventDefault()
-        // return cells[cells.length - 1].splice(0, 1)
-      }
-
+  const handleClick = (e: any) => {
+    const x = e.target.id[0] || undefined;
+    const y = e.target.id[2] || undefined;
+    if(x !== undefined && y !== undefined && cells[x][y] !== Cell.Young) {
+      return cells[x][y] = Cell.Young
+    }
+      console.log(cells)
   }
 
-  const calculateNeighbors = (board: Cell[][], x:number, y:number) => {
+  const resetBoard = () => {
+    setCells([...board])
+    setGeneration(0)
+  }
+
+  const findNeighbors = (board: Cell[][], x:number, y:number) => {
     let neighbors = 0;
     const dirs = [[-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1]];
     for (let i = 0; i < dirs.length; i++) {
         const dir = dirs[i];
         let y1 = y + dir[0];
         let x1 = x + dir[1];
-        // if (x1 >= 0 && x1 < board.length && y1 >= 0 && y1 < board.length && board[y1][x1]) {
 
-          if (x1 >= 0 && x1 < board.length && y1 >= 0 && y1 < board.length && board[y1][x1] === Cell.Dead ) {
-          // console.log('Here', neighbors, y1, x1, board.length);
+        if (x1 >= 0 && x1 < board.length && y1 >= 0 && y1 < board.length && board[y1][x1] === Cell.Dead ) {
           neighbors++;
         }
     }
     return neighbors;
 }
 
-  // const runIterator = () => {
-  //   let newBoard = this.makeEmptyBoard();
-  //   let newCells = board;
-  //   console.log("I am runned!", cells === board);
-    
-  //   for (let y = 0; y < newCells.length; y++) {
-  //       for (let x = 0; x < newCells[y].length; x++) {
-  //           let neighbors = calculateNeighbors(newCells, x, y);
-  //           if (newCells[y][x] == false) {
-  //               if (neighbors === 2 || neighbors === 3) {
-  //                 newCells[y][x] = true;
-  //                 console.log("Newighbours ", newCells[y][x])
-  //               } else {
-  //                 newCells[y][x] = false;
-  //               }
-  //           } else {
-  //               if (newCells[y][x] && neighbors === 3) {
-  //                 newCells[y][x] = true;
-  //               }
-  //           }
-  //       }
-  //   }
-  //   console.log("Here", newCells === board)
-  //   setCells(newCells)
-  //   return presentBoard()
+  // const nextIterations = () => {
+  //     if(generation === 0) { initialRun() }
+  //     else { runIterator }
   // }
 
-  const runIterator = () => {
 
+  const runIterator = () => {
+    if(generation === 0) { initialRun() }
+    setGeneration(generation => generation + 1)
     let newBoard: Cell[][] = cells;
-    console.log("Start Iteration:", newBoard)
     
-    for (let y = 0; y < cells.length; y++) {
-      for(let x = 0; x < cells[y].length; x++) {
-        // newBoard.push({id: y, status: "cell dead"});
-  
-        let check = calculateNeighbors(newBoard, x, y);
-        //keeps the living cell alive if it has 2 or 3 living neighbors
-        if ((cells[y][x] === Cell.YoungAlive || cells[y][x] === Cell.OldAlive) && (check === 3 || check === 2)) {
-          console.log("Number of neighbours: ",check);
-          newBoard[y][x] = Cell.OldAlive
+    for (let y = 0; y < newBoard.length; y++) {
+      for(let x = 0; x < newBoard[y].length; x++) {
+        let neighbor = findNeighbors(newBoard, x, y);
+        if ((newBoard[y][x] === Cell.Young || newBoard[y][x] === Cell.Old) && (neighbor === 3 || neighbor === 2)) {
+          newBoard[y][x] = Cell.Old
         }
-        //brings the dead cell to life if there are exactly 3 neighbors
-        if (cells[y][x] === Cell.Dead && check === 3) {
-          newBoard[y][x] = Cell.YoungAlive
+        if (newBoard[y][x] === Cell.Dead && neighbor === 3) {
+          newBoard[y][x] = Cell.Young
         }
-    
       }
-  
-     
     };
-    console.log("Finished Iteration", newBoard);
     setCells([...newBoard]);
-    return newBoard;
   };
   
   const initialRun = () => {
       let newBoard: Cell[][] = cells;
-
       for(let y = 0; y<newBoard.length; y++) {
         for(let x = 0; x<newBoard[y].length; x++){
-          let DeadOrAliveCell = Math.floor(Math.random() * 2)
-          console.log("CELL STATUS: ", y, x, DeadOrAliveCell )
-          if (DeadOrAliveCell === Cell.Dead) {
-            board[y][x] = Cell.Dead
+          let DeadOrCell = Math.floor(Math.random() * 1.1)
+          if (DeadOrCell === Cell.Dead) {
+            newBoard[y][x] = Cell.Dead
           } else {
-            board[y][x] = Cell.YoungAlive
+            newBoard[y][x] = Cell.Young
           }
         }
       }
      setCells([...newBoard])
   }
 
-
   return (
     <>
-      <Sc.board onContextMenu={handleClick}>
+      <Sc.board onClick={handleClick}>
       {presentBoard()}
       </Sc.board >
-      <Controller runIterator={runIterator} initialRun={initialRun}/>
+      <Controller runIterator={runIterator} initialRun={initialRun} resetBoard={resetBoard}/>
+      <div>Generation: {generation}</div>
+
       
     </>
   )

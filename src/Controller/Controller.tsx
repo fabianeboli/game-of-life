@@ -1,4 +1,5 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState } from 'react';
+import * as Sc from './Controller.style';
 
 interface IProps {
     runIterator: () => void;
@@ -10,9 +11,13 @@ const Controller:FC<IProps> = (props: IProps) => {
     const [updateInterval, setUpdateInterval] = useState<string>('1000')
     const [isRunning, setIsRunning] = useState<boolean>(false)
     const [intervalId, setIntervalId] = useState<number>(0)
-    const stopGame = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const [firstRun, setFirstRun] = useState<boolean>(true)
+
+    const RestartGame = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
         setIsRunning(false)
+        setFirstRun(true)
+        clearInterval(intervalId)
         props.resetBoard()
     }    
 
@@ -22,6 +27,8 @@ const Controller:FC<IProps> = (props: IProps) => {
 
     const handleRun = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault() 
+        if(firstRun) { props.initialRun() }
+        setFirstRun(false)
         let runGame:number;
         const flag = !isRunning;
         setIsRunning(!isRunning)
@@ -36,14 +43,14 @@ const Controller:FC<IProps> = (props: IProps) => {
     }
 
     return (
-        <div>
+        <Sc.Controller>
             <form>
-            Update every <input type='number' name='updateInterval' 
+            Update every <Sc.Input min='300' type='number' name='updateInterval' 
             value={updateInterval} onChange={handleUpdateInterval}/>
-            <button onClick={handleRun}>{isRunning ? 'Stop' : 'Run'}</button>
-            <button onClick={stopGame}>Stop</button>
+            <Sc.Button onClick={handleRun}>{isRunning ? 'Stop' : 'Run'}</Sc.Button>
+            <Sc.Button onClick={RestartGame}>Restart</Sc.Button>
             </form>
-        </div>
+        </Sc.Controller>
     )
 }
 

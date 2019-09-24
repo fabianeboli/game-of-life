@@ -66,25 +66,30 @@ const Board:FC<IProps> = (props: IProps) => {
 
 
   const runIterator = () => {
-    console.log('run iterator')
     setGeneration(generation => generation + 1)
     let newBoard: Cell[][] = cells
     
     for (let y = 0; y < newBoard.length; y++) {
       for(let x = 0; x < newBoard[y].length; x++) {
-        const neighbor = findNeighbors(newBoard, x, y);
-        if ((newBoard[y][x] === Cell.Young || newBoard[y][x] === Cell.Old) && (neighbor === 3 || neighbor === 2)) {
+        const neighbors = findNeighbors(newBoard, x, y);
+        // Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+        if ((newBoard[y][x] !== Cell.Dead ) && neighbors < 2) {
+          newBoard[y][x] = Cell.Dead
+        }
+        // Any live cell with two or three live neighbours lives on to the next generation.
+        else if ((newBoard[y][x] === Cell.Young ) && (neighbors === 3 || neighbors === 2)) {
           newBoard[y][x] = Cell.Old
         }
-        else if (newBoard[y][x] === Cell.Dead && neighbor === 3) {
+        // Any live cell with more than three live neighbours dies, as if by overpopulation.
+        else if ((newBoard[y][x] !== Cell.Dead ) && neighbors > 3) {
+          newBoard[y][x] = Cell.Dead
+        }
+        // Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+        else if (newBoard[y][x] === Cell.Dead && neighbors === 3) {
           newBoard[y][x] = Cell.Young
         }
-        else if ((newBoard[y][x] === Cell.Young || newBoard[y][x] === Cell.Old) && neighbor > 3) {
-          newBoard[y][x] = Cell.Dead
-        }
-        else if ((newBoard[y][x] === Cell.Young || newBoard[y][x] === Cell.Old) && neighbor < 2) {
-          newBoard[y][x] = Cell.Dead
-        }
+        
+        
       }
     };
     setCells([...newBoard]);

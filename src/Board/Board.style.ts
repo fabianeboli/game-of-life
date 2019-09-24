@@ -5,22 +5,24 @@ export const Board = styled.table`
     justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
-    /* border: 5px solid ${p => p.theme.border}; */
     width: 100%;
     margin: 0 auto;
     border-collapse: collapse;
 `
 
 export const Generation = styled.div`
+    display: flex;
+    justify-content: center;
     color: ${p => p.theme.font};
     font-size: 1.75em;
     border: 2px solid ${p => p.theme.button.background};
     padding: 10px;
     margin: 0 42vw;
     text-align: center;
+    text-shadow: 0px 0px 2px ${p => p.theme.font};
+    font-weight: 700;
 `
 export const Row = styled.tr`
-    
     &:first-of-type {
         border-left: 5px solid ${p => p.theme.border};
     }
@@ -34,21 +36,18 @@ export const Row = styled.tr`
 export const Cell = styled.td`
     background-color: black;
     color: transparent;
-    padding: 20px;
-    width: 33.33%;
+    padding: 0.5vw;
+    font-size: 0.01vh;
     border: 1px solid ${p => p.theme.background};
-    /* margin: 0.1em; */
     max-width: 10px;
     display: flex;
 
     &:first-of-type {
-        border-top: 4px solid ${p => p.theme.border};
-        border-collapse: collapse;
+        border-top: 6px solid ${p => p.theme.border};
     }
 
     &:last-of-type {
-        border-bottom: 4px solid ${p => p.theme.border};
-        border-collapse: collapse;
+        border-bottom: 6px solid ${p => p.theme.border};
     }
 
     &.dead {

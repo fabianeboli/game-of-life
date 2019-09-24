@@ -10,6 +10,10 @@ const theme = {
     button: {
         background: '#101619',
         color: '#263a38'
+    },
+    title: {
+        background: '#101619',
+        color: '#8ee9cc'
     }
 }
 

@@ -8,7 +8,7 @@ interface IProps {
 }
 
 const Controller:FC<IProps> = (props: IProps) => {
-    const [updateInterval, setUpdateInterval] = useState<string>('1000')
+    const [updateInterval, setUpdateInterval] = useState<string>('250')
     const [isRunning, setIsRunning] = useState<boolean>(false)
     const [intervalId, setIntervalId] = useState<number>(0)
     const [firstRun, setFirstRun] = useState<boolean>(true)
@@ -44,12 +44,12 @@ const Controller:FC<IProps> = (props: IProps) => {
 
     return (
         <Sc.Controller>
-            <form>
-            Update every <Sc.Input min='300' type='number' name='updateInterval' 
-            value={updateInterval} onChange={handleUpdateInterval}/>
+            <Sc.Form>
+            <Sc.P>Update every <Sc.Input min='150' type='number' name='updateInterval' 
+            value={updateInterval} onChange={handleUpdateInterval}/> ms</Sc.P>
             <Sc.Button onClick={handleRun}>{isRunning ? 'Stop' : 'Run'}</Sc.Button>
             <Sc.Button onClick={RestartGame}>Restart</Sc.Button>
-            </form>
+            </Sc.Form>
         </Sc.Controller>
     )
 }

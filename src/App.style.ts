@@ -1,6 +1,5 @@
 import styled, { createGlobalStyle, keyframes } from "styled-components";
 
-
 const flicker = keyframes`
   0% {
   opacity: 0.27861;
@@ -65,7 +64,7 @@ const flicker = keyframes`
   100% {
   opacity: 0.24387;
   }
-` 
+`;
 export const GlobalStyle = createGlobalStyle`
 
 body, html {
@@ -120,16 +119,16 @@ export const Game = styled.div`
 `;
 
 export const title = styled.h1`
-  color: ${p =>  p.theme.title.color};
+  color: ${p => p.theme.title.color};
   font-size: 3.5em;
-  font-family: 'Press Start 2P', cursive;
+  font-family: "Press Start 2P", cursive;
   background-color: ${p => p.theme.title.background};
   display: flex;
   justify-content: center;
   margin: 1% 35%;
   padding: 10px;
   text-shadow: 0px 0px 8px ${p => p.theme.title.color};
-`
+`;
 
 // .App {
 //   text-align: center;

@@ -125,7 +125,7 @@ const Board: FC<IProps> = (props: IProps) => {
     let newBoard: Cell[][] = cells;
     for (let y = 0; y < newBoard.length; y++) {
       for (let x = 0; x < newBoard[y].length; x++) {
-        const deadOrCell = Math.floor(Math.random() * 1.4);
+        const deadOrCell = Math.floor(Math.random() * 1.2);
         if (deadOrCell === Cell.Dead) {
           newBoard[y][x] = Cell.Dead;
         } else {

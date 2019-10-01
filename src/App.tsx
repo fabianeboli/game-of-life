@@ -10,7 +10,7 @@ const App: React.FC = () => {
     <ThemeProvider theme={theme}>
       <>
         <Sc.GlobalStyle />
-        <Sc.Game className="App">
+        <Sc.Game>
           <Sc.title>Game Of Life</Sc.title>
           <Board size={6} />
         </Sc.Game>

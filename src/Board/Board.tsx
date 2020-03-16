@@ -17,9 +17,9 @@ interface IProps {
 const Board: FC<IProps> = (props: IProps) => {
 	const uuid = require('uuid/v4');
 	const size: number = Math.pow(props.size, 2);
-	const board: Cell[][] = new Array(size)
+	const board: Cell[][] = Array(size)
 		.fill(Cell.Dead)
-		.map(() => new Array(size).fill(Cell.Dead));
+		.map(() => Array(size).fill(Cell.Dead));
 
 	const [cells, setCells] = useState<Cell[][]>(board);
 	const [generation, setGeneration] = useState<number>(0);
@@ -101,7 +101,7 @@ const Board: FC<IProps> = (props: IProps) => {
 					newBoard[y][x] = Cell.Dead;
 				}
 				// Any live cell with two or three live neighbours lives on to the next generation.
-				else if (newBoard[y][x] === Cell.Young && (neighbors === 3 || neighbors === 2)) {
+				else if (newBoard[y][x] !== Cell.Dead && (neighbors === 3 || neighbors === 2)) {
 					newBoard[y][x] = Cell.Old;
 				}
 				// Any live cell with more than three live neighbours dies, as if by overpopulation.
@@ -122,7 +122,7 @@ const Board: FC<IProps> = (props: IProps) => {
 		let newBoard: Cell[][] = cells;
 		for (let y = 0; y < newBoard.length; y++) {
 			for (let x = 0; x < newBoard[y].length; x++) {
-				const deadOrCell: Cell = Math.floor(Math.random() * 1.2);
+				const deadOrCell: Cell = Math.floor(Math.random() * 1.1);
 				if (deadOrCell === Cell.Dead) {
 					newBoard[y][x] = Cell.Dead;
 				} else {
